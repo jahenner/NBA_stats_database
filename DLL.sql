@@ -4,13 +4,13 @@ SET AUTOCOMMIT = 0;
 -- -----------------------------------------------------
 -- Schema NBA_stats
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `NBA_stats` DEFAULT CHARACTER SET utf8 ;
-USE `NBA_stats` ;
+-- CREATE SCHEMA IF NOT EXISTS `NBA_stats` DEFAULT CHARACTER SET utf8 ;
+-- USE `NBA_stats` ;
 
 -- -----------------------------------------------------
 -- Table `NBA_stats`.`Cities`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `NBA_stats`.`Cities` (
+CREATE TABLE IF NOT EXISTS `Cities` (
   `city_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(145) NULL,
   `population` INT NULL,
@@ -22,7 +22,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `NBA_stats`.`Teams`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `NBA_stats`.`Teams` (
+CREATE TABLE IF NOT EXISTS `Teams` (
   `team_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `mascot` VARCHAR(145) NULL,
@@ -41,7 +41,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `NBA_stats`.`Games`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `NBA_stats`.`Games` (
+CREATE TABLE IF NOT EXISTS `Games` (
   `game_id` INT NOT NULL AUTO_INCREMENT,
   `date` VARCHAR(45) NULL,
   PRIMARY KEY (`game_id`),
@@ -52,7 +52,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `NBA_stats`.`Teams_has_Games`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `NBA_stats`.`Teams_has_Games` (
+CREATE TABLE IF NOT EXISTS `Teams_has_Games` (
   `home_team_id` INT NOT NULL,
   `away_team_id` INT NOT NULL,
   `game_id` INT NOT NULL,
@@ -60,10 +60,16 @@ CREATE TABLE IF NOT EXISTS `NBA_stats`.`Teams_has_Games` (
   `away_team_score` INT NULL,
   PRIMARY KEY (`away_team_id`, `game_id`, `home_team_id`),
   INDEX `fk_Teams_has_Games_Games1_idx` (`game_id` ASC) VISIBLE,
-  INDEX `fk_Teams_has_Games_Teams1_idx` (`away_team_id` ASC, `home_team_id` ASC) VISIBLE,
-  CONSTRAINT `fk_Teams_has_Games_Teams1`
-    FOREIGN KEY (`away_team_id` , `home_team_id`)
-    REFERENCES `NBA_stats`.`Teams` (`team_id` , `team_id`)
+  INDEX `fk_Teams_has_Games_Home_idx` (`home_team_id` ASC) VISIBLE,
+  INDEX `fk_Teams_has_Games_Away_idx` (`away_team_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Teams_has_Games_Home`
+    FOREIGN KEY (`home_team_id`)
+    REFERENCES `NBA_stats`.`Teams` (`team_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Teams_has_Games_Away`
+    FOREIGN KEY (`away_team_id`)
+    REFERENCES `NBA_stats`.`Teams` (`team_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Teams_has_Games_Games1`
@@ -77,7 +83,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `NBA_stats`.`Players`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `NBA_stats`.`Players` (
+CREATE TABLE IF NOT EXISTS `Players` (
   `player_id` INT NOT NULL AUTO_INCREMENT,
   `first_name` VARCHAR(100) NULL,
   `last_name` VARCHAR(100) NULL,
@@ -108,7 +114,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `NBA_stats`.`Players_has_Games`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `NBA_stats`.`Players_has_Games` (
+CREATE TABLE IF NOT EXISTS `Players_has_Games` (
   `player_id` INT NOT NULL,
   `game_id` INT NOT NULL,
   `rebounds` INT NULL,
