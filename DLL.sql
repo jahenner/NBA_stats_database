@@ -6,7 +6,7 @@ SET AUTOCOMMIT = 0;
 -- -----------------------------------------------------
 -- CREATE SCHEMA IF NOT EXISTS `NBA_stats` DEFAULT CHARACTER SET utf8 ;
 -- USE `NBA_stats` ;
-DROP TABLES Cities, Games, Players, Players_has_Games, Teams, Teams_has_Games;
+DROP TABLES IF EXISTS Cities, Games, Players, Players_has_Games, Teams, Teams_has_Games;
 -- -----------------------------------------------------
 -- Table `NBA_stats`.`Cities`
 -- -----------------------------------------------------
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `Players` (
   CONSTRAINT `fk_Players_Teams1`
     FOREIGN KEY (`current_team`)
     REFERENCES `Teams` (`team_id`)
-    ON DELETE NO ACTION
+    ON DELETE SET NULL
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS `Players_has_Games` (
   CONSTRAINT `fk_Players_has_Games_Games1`
     FOREIGN KEY (`game_id`)
     REFERENCES `Games` (`game_id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
