@@ -6,7 +6,7 @@ SET AUTOCOMMIT = 0;
 -- -----------------------------------------------------
 -- CREATE SCHEMA IF NOT EXISTS `NBA_stats` DEFAULT CHARACTER SET utf8 ;
 -- USE `NBA_stats` ;
-
+DROP TABLES Cities, Games, Players, Players_has_Games, Teams, Teams_has_Games;
 -- -----------------------------------------------------
 -- Table `NBA_stats`.`Cities`
 -- -----------------------------------------------------
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `Players` (
   `career_blocks` INT NULL,
   `career_rebounds` INT NULL,
   `hometown` INT NOT NULL,
-  `current_team` INT,
+  `current_team` INT NULL,
   PRIMARY KEY (`player_id`, `current_team`, `hometown`),
   UNIQUE INDEX `player_id_UNIQUE` (`player_id` ASC) VISIBLE,
   INDEX `fk_Players_Cities1_idx` (`hometown` ASC) VISIBLE,
@@ -149,7 +149,53 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Insert into Cities
 -- -----------------------------------------------------
--- INSERT INTO Cities 
+INSERT INTO Cities (name, population)
+VALUES ("Los Angeles", 3967000),
+  ("Atlanta", 488800),
+  ("Miami", 454279),
+  ("Long Beach", 466766),
+  ("Gary", 76010);
+
+-- -----------------------------------------------------
+-- Insert into Games
+-- -----------------------------------------------------
+INSERT INTO Games (date)
+VALUES ("2022-01-07"),
+  ("2022-01-30"),
+  ("2022-04-26");
+
+-- -----------------------------------------------------
+-- Insert into Teams
+-- -----------------------------------------------------
+INSERT INTO Teams (name, mascot, location)
+VALUES ("Lakers", NULL, (select city_id from Cities where name="Los Angeles")),
+  ("Heat", "Burnie", (select city_id from Cities where name="Miami")),
+  ("Clippers", "Chuck The Condor", (select city_id from Cities where name="Los Angeles")),
+  ("Hawks", "Harry The Hawk", (select city_id from Cities where name="Atlanta"));
+
+-- -----------------------------------------------------
+-- Insert into Players
+-- -----------------------------------------------------
+INSERT INTO Players (first_name, last_name, age, career_points, career_steals, career_blocks, career_rebounds, hometown, current_team)
+VALUES ("Russell", "Westbrook", 33, 23279,	1736,	306,	7555,	(select city_id from Cities where name="Long Beach"), (select team_id from Teams where name="Lakers")),
+  ("Chet", "Aubuchon", -1, 66,	0,	0,	0, (select city_id from Cities where name="Gary"), NULL),
+  ("Delon", "Wright", 30,	2959,	493,	164,	1315, (select city_id from Cities where name="Los Angeles"), (select team_id from Teams where name="Hawks"));
+
+-- -----------------------------------------------------
+-- Insert into Teams_has_Games
+-- -----------------------------------------------------
+INSERT INTO Teams_has_Games (home_team_id, away_team_id, game_id, home_team_score, away_team_score)
+VALUES ((select team_id from Teams where name="Lakers"), (select team_id from Teams where name="Hawks"), (select game_id from Games where date="2022-01-07"), 134, 118),
+  ((select team_id from Teams where name="Hawks"), (select team_id from Teams where name="Lakers"), (select game_id from Games where date="2022-01-30"), 129, 121),
+  ((select team_id from Teams where name="Heat"), (select team_id from Teams where name="Hawks"), (select game_id from Games where date="2022-04-26"), 97, 94);
+
+-- -----------------------------------------------------
+-- Insert into Players_has_Games
+-- -----------------------------------------------------
+INSERT INTO Players_has_Games (player_id,	game_id,	rebounds,	blocks,	steals,	turnovers,	minutes_played,	started_game,	freethrows_attempt,	freethrows_made,	field_goals_attempt,	field_goals_made,	3_points_attempt,	3_points_made,	assists,	fouls)
+VALUES ((select player_id from Players where first_name="Russell" and last_name="Westbrook" and hometown=(select city_id from Cities where name="Long Beach") and current_team=(select team_id from Teams where name="Lakers")), (select game_id from Games where date="2022-01-07"), 11,	0,	0,	3,	"31:07",	1,	1,	3,	4,	14,	0,	0,	13,	6),
+  ((select player_id from Players where first_name="Russell" and last_name="Westbrook" and hometown=(select city_id from Cities where name="Long Beach") and current_team=(select team_id from Teams where name="Lakers")), (select game_id from Games where date="2022-01-30"), 7,	0,	1,	4,	"35:00",	1,	2,	5,	8,	15,	2,	4,	12,	1),
+  ((select player_id from Players where first_name="Delon" and last_name="Wright" and hometown=(select city_id from Cities where name="Los Angeles") and current_team=(select team_id from Teams where name="Hawks")), (select game_id from Games where date="2022-01-07"), 0,	0,	0,	0,	"14:10",	0,	0,	0,	1,	3,	1,	1,	1,	1);
 
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
