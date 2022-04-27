@@ -23,11 +23,11 @@ ENGINE = InnoDB;
 -- Table `NBA_stats`.`Teams`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Teams` (
-  `team_id` INT NOT NULL AUTO_INCREMENT,
+  `team_id` INT AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `mascot` VARCHAR(145),
   `location` INT NOT NULL,
-  PRIMARY KEY (`team_id`, `location`),
+  PRIMARY KEY (`team_id`),
   UNIQUE INDEX `team_id_UNIQUE` (`team_id` ASC) VISIBLE,
   INDEX `fk_Teams_Cities_idx` (`location` ASC) VISIBLE,
   CONSTRAINT `fk_Teams_Cities`
@@ -93,8 +93,8 @@ CREATE TABLE IF NOT EXISTS `Players` (
   `career_blocks` INT NULL,
   `career_rebounds` INT NULL,
   `hometown` INT NOT NULL,
-  `current_team` INT NULL,
-  PRIMARY KEY (`player_id`, `current_team`, `hometown`),
+  `current_team` INT,
+  PRIMARY KEY (`player_id`),
   UNIQUE INDEX `player_id_UNIQUE` (`player_id` ASC) VISIBLE,
   INDEX `fk_Players_Cities1_idx` (`hometown` ASC) VISIBLE,
   INDEX `fk_Players_Teams1_idx` (`current_team` ASC) VISIBLE,
