@@ -25,7 +25,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `Teams` (
   `team_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  `mascot` VARCHAR(145) NULL,
+  `mascot` VARCHAR(145),
   `location` INT NOT NULL,
   PRIMARY KEY (`team_id`, `location`),
   UNIQUE INDEX `team_id_UNIQUE` (`team_id` ASC) VISIBLE,
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `Players` (
   `career_blocks` INT NULL,
   `career_rebounds` INT NULL,
   `hometown` INT NOT NULL,
-  `current_team` INT NOT NULL,
+  `current_team` INT,
   PRIMARY KEY (`player_id`, `current_team`, `hometown`),
   UNIQUE INDEX `player_id_UNIQUE` (`player_id` ASC) VISIBLE,
   INDEX `fk_Players_Cities1_idx` (`hometown` ASC) VISIBLE,
@@ -149,7 +149,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Insert into Cities
 -- -----------------------------------------------------
-INSERT INTO Cities 
+-- INSERT INTO Cities 
 
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
