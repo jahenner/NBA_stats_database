@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `Teams` (
   INDEX `fk_Teams_Cities_idx` (`location` ASC) VISIBLE,
   CONSTRAINT `fk_Teams_Cities`
     FOREIGN KEY (`location`)
-    REFERENCES `NBA_stats`.`Cities` (`city_id`)
+    REFERENCES `Cities` (`city_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -64,17 +64,17 @@ CREATE TABLE IF NOT EXISTS `Teams_has_Games` (
   INDEX `fk_Teams_has_Games_Away_idx` (`away_team_id` ASC) VISIBLE,
   CONSTRAINT `fk_Teams_has_Games_Home`
     FOREIGN KEY (`home_team_id`)
-    REFERENCES `NBA_stats`.`Teams` (`team_id`)
+    REFERENCES `Teams` (`team_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Teams_has_Games_Away`
     FOREIGN KEY (`away_team_id`)
-    REFERENCES `NBA_stats`.`Teams` (`team_id`)
+    REFERENCES `Teams` (`team_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Teams_has_Games_Games1`
     FOREIGN KEY (`game_id`)
-    REFERENCES `NBA_stats`.`Games` (`game_id`)
+    REFERENCES `Games` (`game_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -100,12 +100,12 @@ CREATE TABLE IF NOT EXISTS `Players` (
   INDEX `fk_Players_Teams1_idx` (`current_team` ASC) VISIBLE,
   CONSTRAINT `fk_Players_Cities1`
     FOREIGN KEY (`hometown`)
-    REFERENCES `NBA_stats`.`Cities` (`city_id`)
+    REFERENCES `Cities` (`city_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Players_Teams1`
     FOREIGN KEY (`current_team`)
-    REFERENCES `NBA_stats`.`Teams` (`team_id`)
+    REFERENCES `Teams` (`team_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -136,15 +136,20 @@ CREATE TABLE IF NOT EXISTS `Players_has_Games` (
   INDEX `fk_Players_has_Games_Players1_idx` (`player_id` ASC) VISIBLE,
   CONSTRAINT `fk_Players_has_Games_Players1`
     FOREIGN KEY (`player_id`)
-    REFERENCES `NBA_stats`.`Players` (`player_id`)
+    REFERENCES `Players` (`player_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Players_has_Games_Games1`
     FOREIGN KEY (`game_id`)
-    REFERENCES `NBA_stats`.`Games` (`game_id`)
+    REFERENCES `Games` (`game_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Insert into Cities
+-- -----------------------------------------------------
+INSERT INTO Cities 
 
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
