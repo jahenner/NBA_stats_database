@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "express": "^4.18.1",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.16"
+  },
+  "name": "nba_stats_database",
+  "description": "Database that will hold NBA stats",
+  "version": "1.0.0",
+  "main": "db-controller.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon db-controller.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jahenner/NBA_stats_database.git"
+  },
+  "author": "Alex Henner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jahenner/NBA_stats_database/issues"
+  },
+  "homepage": "https://github.com/jahenner/NBA_stats_database#readme"
+}
