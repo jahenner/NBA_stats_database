@@ -13,7 +13,7 @@ var db = require('./db-connector')
 /*
     ROUTES
 */
-app.get('/', function(req, res)
+app.get('/GetCities', function(req, res)
     {
         // Define our queries
         query1 = 'Select * from Cities;';
