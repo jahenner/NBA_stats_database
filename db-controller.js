@@ -5,7 +5,11 @@
 // Express
 var express = require('express');
 var app = express();
-PORT = 9124;
+app.use(express.json())
+app.use(express.urlencoded({
+    extended: true
+}));
+PORT = 3000;
 
 // Database
 var db = require('./db-connector')
@@ -22,7 +26,8 @@ app.get('/GetCities', function(req, res)
 
         // DROP TABLE...
         db.pool.query(query1, function (err, results, fields){
-            res.send(JSON.stringify(results));
+            console.log(results)
+            res.status(201).json(results);
         });
     });
 /*
