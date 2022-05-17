@@ -1,6 +1,5 @@
 // ./database/db-connector.js
-// import {secrets} from "./secrets.js";
-
+var secrets = require('./secrets.js')
 // Get an instance of mysql we can use in the app
 var mysql = require('mysql')
 
@@ -8,8 +7,8 @@ var mysql = require('mysql')
 var pool = mysql.createPool({
     connectionLimit : 10,
     host            : '127.0.0.1',
-    user            : 'jahenner',
-    password        : "Superman24!",
+    user            : secrets.username,
+    password        : secrets.password,
     database        : 'NBA'
 })
 
