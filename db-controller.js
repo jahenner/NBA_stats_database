@@ -5,10 +5,10 @@
 // Express
 var express = require('express');
 var app = express();
-// app.use(express.json())
-// app.use(express.urlencoded({
-//     extended: true
-// }));
+app.use(express.json())
+app.use(express.urlencoded({
+    extended: true
+}));
 PORT = 3000;
 
 // Database
@@ -40,23 +40,58 @@ app.get('/GetGames', function(req, res)
 
     // DROP TABLE...
     db.pool.query(query1, function (err, results, fields) {
-        console.log(results, fields, err)
+        // console.log(results, fields, err)
         res.status(201).json(results);
         })
     });
 
-app.delete('/GetGames/:game_id', (req, res) => {
-    games.deleteGame(req.params.game_id)
-    .then(deletedCount => {
-        if (deletedCount === 1) {
-            res.status(204).send();
+app.get('/GetTeams', function(req,res) {
+    query1 = 'SELECT Teams.team_id, Teams.name, Teams.mascot, Cities.name as location FROM Teams JOIN Cities on Cities.city_id=Teams.location;'
+
+    db.pool.query(query1, function (err, results, fields) {
+        // console.log(results, fields, err)
+        res.status(201).json(results);
+
+        })
+})
+
+app.put("/GetGames/:_id", function(req,res) {
+    const game_id = req.params._id;
+    console.log(req.body)
+})
+
+app.post("/addGame", function(req,res) {
+    query1 = `INSERT INTO Games (date) VALUES ('${req.body.date}');`
+    query2 = `INSERT INTO Teams_has_Games (home_team_id, away_team_id, game_id, home_team_score, away_team_score) VALUES (${req.body.homeTeam}, ${req.body.awayTeam}, (SELECT max(game_id) from Games), ${req.body.homeScore}, ${req.body.awayScore});`
+    db.pool.query(query1, function (err, results, fields) {
+        if (err != null) {
+            res.status(500).json({ Error: 'New game failed'})
+            
         } else {
-            res.status(500).json({ Error: 'Resource not found!' });
+            db.pool.query(query2, function (err, results, fields) {
+                if (err == null) {
+                    res.status(201).json(results)
+                } else {
+                    console.log(err)
+                    res.status(500).json({ Error: 'Game details failed'})
+                }
+            })
         }
     })
-    .catch(error => {
-        console.error(error);
-        res.status(500).send({ error: 'The request to delete by game_id has failed!' });
+})
+
+app.delete('/GetGames/:_id', (req, res) => {
+    const game_id = parseInt(req.params._id)
+    query1 = `DELETE FROM Teams_has_Games WHERE game_id=${game_id}`
+    query2 = `DELETE FROM Players_has_Games WHERE game_id=${game_id}`
+    query3 = `DELETE FROM Games WHERE game_id=${game_id}`
+
+    db.pool.query(query1, function (err, results, fields){
+        db.pool.query(query2, function (err, results, fields){
+            db.pool.query(query3, function (err, results, fields){
+                res.status(204).json(results);
+            });
+        });
     });
 });
 
