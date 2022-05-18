@@ -20,7 +20,7 @@ var db = require('./db-connector')
 app.get('/GetCities', function(req, res)
     {
         // Define our queries
-        query1 = 'Select * from Cities;';
+        const query1 = 'Select * from Cities;';
 
         // Execute every query in an asynchronous manner, we want each query to finish before the next one starts
 
@@ -34,7 +34,7 @@ app.get('/GetCities', function(req, res)
 app.get('/GetGames', function(req, res)
     {
     // Define our queries
-    query1 = 'SELECT Games.game_id as game_id, home.team_id as home_id, away.team_id as away_id, Games.date, home.name as home_team, away.name as away_team, Teams_has_Games.home_team_score, Teams_has_Games.away_team_score FROM Teams_has_Games LEFT JOIN Teams home ON Teams_has_Games.home_team_id=home.team_id LEFT JOIN Teams away ON Teams_has_Games.away_team_id=away.team_id JOIN Games ON Games.game_id=Teams_has_Games.game_id;';
+    const query1 = 'SELECT Games.game_id as game_id, home.team_id as home_id, away.team_id as away_id, Games.date, home.name as home_team, away.name as away_team, Teams_has_Games.home_team_score, Teams_has_Games.away_team_score FROM Teams_has_Games LEFT JOIN Teams home ON Teams_has_Games.home_team_id=home.team_id LEFT JOIN Teams away ON Teams_has_Games.away_team_id=away.team_id JOIN Games ON Games.game_id=Teams_has_Games.game_id;';
 
     // Execute every query in an asynchronous manner, we want each query to finish before the next one starts
 
@@ -46,7 +46,7 @@ app.get('/GetGames', function(req, res)
     });
 
 app.get('/GetTeams', function(req,res) {
-    query1 = 'SELECT Teams.team_id, Teams.name, Teams.mascot, Cities.name as location FROM Teams JOIN Cities on Cities.city_id=Teams.location;'
+    const query1 = 'SELECT Teams.team_id, Teams.name, Teams.mascot, Cities.name as location FROM Teams JOIN Cities on Cities.city_id=Teams.location;'
 
     db.pool.query(query1, function (err, results, fields) {
         // console.log(results, fields, err)
@@ -55,14 +55,29 @@ app.get('/GetTeams', function(req,res) {
         })
 })
 
-app.put("/GetGames/:_id", function(req,res) {
+app.put("/UpdateGame/:_id", function(req,res) {
     const game_id = req.params._id;
     console.log(req.body)
+    const query = `SELECT date from Games WHERE game_id=${game_id}`
+    const query1 = `UPDATE Games SET date='${req.body.date}' WHERE game_id=${game_id}`
+    const query2 = `UPDATE Teams_has_Games SET home_team_id=${req.body.home_id}, away_team_id=${req.body.away_id}, home_team_score=${req.body.home_team_score}, away_team_score=${req.body.away_team_score} WHERE game_id=${game_id}`
+
+    db.pool.query(query, function (err, results, fields) {
+        // console.log(results, fields, err)
+        db.pool.query(query1, function (err, results, fields) {
+                console.log(results);
+                db.pool.query(query2, function (err, results, fields) {
+                    console.log(results)
+                    res.status(201).json(results);
+                })
+            })
+        })
 })
 
 app.post("/addGame", function(req,res) {
-    query1 = `INSERT INTO Games (date) VALUES ('${req.body.date}');`
-    query2 = `INSERT INTO Teams_has_Games (home_team_id, away_team_id, game_id, home_team_score, away_team_score) VALUES (${req.body.homeTeam}, ${req.body.awayTeam}, (SELECT max(game_id) from Games), ${req.body.homeScore}, ${req.body.awayScore});`
+    const query1 = `INSERT INTO Games (date) VALUES ('${req.body.date}');`
+    const query2 = `INSERT INTO Teams_has_Games (home_team_id, away_team_id, game_id, home_team_score, away_team_score) VALUES (${req.body.homeTeam}, ${req.body.awayTeam}, (SELECT max(game_id) from Games), ${req.body.homeScore}, ${req.body.awayScore});`
+
     db.pool.query(query1, function (err, results, fields) {
         if (err != null) {
             res.status(500).json({ Error: 'New game failed'})
@@ -82,9 +97,9 @@ app.post("/addGame", function(req,res) {
 
 app.delete('/GetGames/:_id', (req, res) => {
     const game_id = parseInt(req.params._id)
-    query1 = `DELETE FROM Teams_has_Games WHERE game_id=${game_id}`
-    query2 = `DELETE FROM Players_has_Games WHERE game_id=${game_id}`
-    query3 = `DELETE FROM Games WHERE game_id=${game_id}`
+    const query1 = `DELETE FROM Teams_has_Games WHERE game_id=${game_id}`
+    const query2 = `DELETE FROM Players_has_Games WHERE game_id=${game_id}`
+    const query3 = `DELETE FROM Games WHERE game_id=${game_id}`
 
     db.pool.query(query1, function (err, results, fields){
         db.pool.query(query2, function (err, results, fields){
