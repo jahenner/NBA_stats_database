@@ -7,9 +7,15 @@ var mysql = require('mysql')
 var pool = mysql.createPool({
     connectionLimit : 10,
     host            : '127.0.0.1',
+<<<<<<< HEAD
     user            : 'jahenner',
     password        : 'Superman24!',
     database        : 'NBA'
+=======
+    user            : 'root',
+    password        : 'your_current_password',
+    database        : 'nba'
+>>>>>>> c829fb7563ec9334097b64d4bd15f3239c6f5093
 })
 
 // Export it for use in our applicaiton
