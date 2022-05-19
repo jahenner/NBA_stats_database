@@ -1,5 +1,4 @@
 // ./database/db-connector.js
-var secrets = require('./secrets.js')
 // Get an instance of mysql we can use in the app
 var mysql = require('mysql')
 
