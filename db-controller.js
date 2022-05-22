@@ -115,6 +115,39 @@ app.post("/addGame", function(req,res) {
     })
 })
 
+app.post("/addCity", function(req,res) {
+    const query1 = `INSERT INTO Cities(name, population) VALUES ('${req.body.name}', '${req.body.population}');`
+
+    db.pool.query(query1, function (err, results, fields) {
+        if (err != null) {
+            res.status(500).json({ Error: 'New city failed'})
+            
+        } else {
+            res.status(201).json(results) }});
+})
+
+app.post("/addTeam", function(req,res) {
+    const query1 = `INSERT INTO Teams (name, mascot, location) VALUES ('${req.body.name}', '${req.body.mascot}', '${req.body.location}');`
+
+    db.pool.query(query1, function (err, results, fields) {
+        if (err != null) {
+            res.status(500).json({ Error: 'New team failed'})
+            
+        } else {
+            res.status(201).json(results) }});
+})
+
+app.post("/addPlayer", function(req,res) {
+    const query1 = `INSERT INTO Players(first_name, last_name, age, career_points, career_steals, career_blocks, career_rebounds, hometown, current_team) VALUES ('${req.body.first_name}', '${req.body.last_name}', '${req.body.age}', '${req.body.career_points}', '${req.body.career_steals}', '${req.body.career_blocks}', '${req.body.career_rebounds}', '${req.body.hometown}', '${req.body.current_team}');`
+
+    db.pool.query(query1, function (err, results, fields) {
+        if (err != null) {
+            res.status(500).json({ Error: 'New player failed'})
+            
+        } else {
+            res.status(201).json(results) }});
+})
+
 app.delete('/GetGames/:_id', (req, res) => {
     const game_id = parseInt(req.params._id)
     const query1 = `DELETE FROM Teams_has_Games WHERE game_id=${game_id}`
