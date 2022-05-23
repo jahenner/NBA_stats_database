@@ -98,9 +98,18 @@ app.put("/UpdateCity/:_id", function(req,res) {
     const city_id = req.params._id;
     console.log(req.body)
     const query = `SELECT * from Cities WHERE city_id=${city_id}`
+    const query1 = `UPDATE Cities SET name='${req.body.name}' WHERE city_id=${city_id}`
+    const query2 = `UPDATE Cities SET population='${req.body.population}' WHERE city_id=${city_id}`
     db.pool.query(query, function (err, results, fields) {
-        res.status(201).json(results);
+        // console.log(results, fields, err)
+        db.pool.query(query1, function (err, results, fields) {
+                console.log(results);
+                db.pool.query(query2, function (err, results, fields) {
+                    console.log(results)
+                    res.status(201).json(results);
+                })
             })
+        })
         })
 
 app.post("/addGame", function(req,res) {
