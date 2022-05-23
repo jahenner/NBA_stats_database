@@ -112,6 +112,32 @@ app.put("/UpdateCity/:_id", function(req,res) {
         })
         })
 
+app.put("/UpdateTeam/:_id", function(req,res) {
+    const team_id = req.params._id;
+    console.log(req.body)
+    const query = `SELECT * from Teams WHERE team_id=${team_id}`
+    const query1 = `UPDATE Teams SET name='${req.body.name}' WHERE team_id=${team_id}`
+    const query2 = `UPDATE Teams SET mascot='${req.body.mascot}' WHERE team_id=${team_id}`
+    const query3 = `UPDATE Players SET current_team='${req.body.name}' WHERE team_id=${team_id}`
+    const query4 = `UPDATE Teams_has_Games SET home_team='${req.body.name}' WHERE team_id=${team_id}`
+    const query5 = `UPDATE Teams_has_Games SET away_team='${req.body.name}' WHERE team_id=${team_id}`
+
+    db.pool.query(query, function (err, results, fields) {
+        // console.log(results, fields, err)
+        db.pool.query(query1, function (err, results, fields) {
+                db.pool.query(query2, function (err, results, fields) {
+                    db.pool.query(query3, function(err, results, fields) {
+                        db.pool.query(query4, function(err, results, fields) {
+                            db.pool.query(query5, function(err, results, fields) {
+                                res.status(201).json(results);
+                            })
+                        })
+                    })
+                })
+            })
+        })
+        })
+
 app.post("/addGame", function(req,res) {
     const query1 = `INSERT INTO Games (date) VALUES ('${req.body.date}');`
     const query2 = `INSERT INTO Teams_has_Games (home_team_id, away_team_id, game_id, home_team_score, away_team_score) VALUES (${req.body.homeTeam}, ${req.body.awayTeam}, (SELECT max(game_id) from Games), ${req.body.homeScore}, ${req.body.awayScore});`
@@ -188,7 +214,16 @@ app.delete('/GetCities/:_id', (req, res) => {
     db.pool.query(query1, function (err, results, fields){
                 res.status(204).json(results);
             });
-        });
+});
+
+app.delete('/GetTeams/:_id', (req, res) => {
+    const team_id = parseInt(req.params._id)
+    const query1 = `DELETE FROM Teams WHERE team_id=${team_id}`
+
+    db.pool.query(query1, function (err, results, fields){
+                res.status(204).json(results);
+            });
+});
 
 
 
