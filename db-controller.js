@@ -94,6 +94,15 @@ app.put("/UpdateGame/:_id", function(req,res) {
         })
 })
 
+app.put("/UpdateCity/:_id", function(req,res) {
+    const city_id = req.params._id;
+    console.log(req.body)
+    const query = `SELECT * from Cities WHERE city_id=${city_id}`
+    db.pool.query(query, function (err, results, fields) {
+        res.status(201).json(results);
+            })
+        })
+
 app.post("/addGame", function(req,res) {
     const query1 = `INSERT INTO Games (date) VALUES ('${req.body.date}');`
     const query2 = `INSERT INTO Teams_has_Games (home_team_id, away_team_id, game_id, home_team_score, away_team_score) VALUES (${req.body.homeTeam}, ${req.body.awayTeam}, (SELECT max(game_id) from Games), ${req.body.homeScore}, ${req.body.awayScore});`
@@ -116,7 +125,7 @@ app.post("/addGame", function(req,res) {
 })
 
 app.post("/addCity", function(req,res) {
-    const query1 = `INSERT INTO Cities(name, population) VALUES ('${req.body.name}', '${req.body.population}');`
+    const query1 = `INSERT INTO Cities (name, population) VALUES ('${req.body.name}', '${req.body.population}');`
 
     db.pool.query(query1, function (err, results, fields) {
         if (err != null) {
@@ -162,6 +171,16 @@ app.delete('/GetGames/:_id', (req, res) => {
         });
     });
 });
+
+app.delete('/GetCities/:_id', (req, res) => {
+    const city_id = parseInt(req.params._id)
+    const query1 = `DELETE FROM Cities WHERE city_id=${city_id}`
+
+    db.pool.query(query1, function (err, results, fields){
+                res.status(204).json(results);
+            });
+        });
+
 
 
 /*
