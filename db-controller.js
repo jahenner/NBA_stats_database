@@ -40,13 +40,13 @@ app.get('/GetGames', function(req, res)
 
     // DROP TABLE...
     db.pool.query(query1, function (err, results, fields) {
-        console.log(results, fields, err)
+        // console.log(results, fields, err)
         res.status(201).json(results);
         })
     });
 
 app.get('/GetTeams', function(req,res) {
-    const query1 = 'SELECT Teams.team_id, Teams.name, Teams.mascot, Cities.name as location FROM Teams JOIN Cities on Cities.city_id=Teams.location;'
+    const query1 = 'SELECT Teams.team_id, Teams.name, Teams.mascot, Cities.name as location, Cities.city_id FROM Teams JOIN Cities on Cities.city_id=Teams.location;'
 
     db.pool.query(query1, function (err, results, fields) {
         // console.log(results, fields, err)
@@ -115,25 +115,13 @@ app.put("/UpdateCity/:_id", function(req,res) {
 app.put("/UpdateTeam/:_id", function(req,res) {
     const team_id = req.params._id;
     console.log(req.body)
-    const query = `SELECT * from Teams WHERE team_id=${team_id}`
-    const query1 = `UPDATE Teams SET name='${req.body.name}' WHERE team_id=${team_id}`
-    const query2 = `UPDATE Teams SET mascot='${req.body.mascot}' WHERE team_id=${team_id}`
-    const query3 = `UPDATE Players SET current_team='${req.body.name}' WHERE team_id=${team_id}`
-    const query4 = `UPDATE Teams_has_Games SET home_team='${req.body.name}' WHERE team_id=${team_id}`
-    const query5 = `UPDATE Teams_has_Games SET away_team='${req.body.name}' WHERE team_id=${team_id}`
+    const query = `UPDATE Teams SET name='${req.body.name}', mascot='${req.body.mascot}', location=${req.body.city_id} WHERE team_id=${team_id}`
 
     db.pool.query(query, function (err, results, fields) {
         // console.log(results, fields, err)
-        db.pool.query(query1, function (err, results, fields) {
-                db.pool.query(query2, function (err, results, fields) {
-                    db.pool.query(query3, function(err, results, fields) {
-                        db.pool.query(query4, function(err, results, fields) {
-                            db.pool.query(query5, function(err, results, fields) {
-                                res.status(201).json(results);
-                            })
-                        })
-                    })
-                })
+        db.pool.query(query, function (err, results, fields) {
+            console.log(`error: ${err}`)
+            res.status(201).json(results);
             })
         })
         })
