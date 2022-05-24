@@ -126,6 +126,20 @@ app.put("/UpdateTeam/:_id", function(req,res) {
         })
         })
 
+app.put("/UpdatePlayer/:_id", function(req,res) {
+    const player_id = req.params._id;
+    console.log(req.body)
+    const query = `UPDATE Players SET first_name='${req.body.first_name}', last_name='${req.body.last_name}', age=${req.body.age}, career_points=${req.body.career_points}, career_blocks=${req.body.career_blocks}, career_steals=${req.body.career_steals}, career_rebounds=${req.body.career_rebounds}, hometown=${req.body.city_id}, current_team=${req.body.current_team} WHERE player_id=${req.body._id}`
+
+    db.pool.query(query, function (err, results, fields) {
+        // console.log(results, fields, err)
+        db.pool.query(query, function (err, results, fields) {
+            console.log(`error: ${err}`)
+            res.status(201).json(results);
+            })
+        })
+        })
+
 app.post("/addGame", function(req,res) {
     const query1 = `INSERT INTO Games (date) VALUES ('${req.body.date}');`
     const query2 = `INSERT INTO Teams_has_Games (home_team_id, away_team_id, game_id, home_team_score, away_team_score) VALUES (${req.body.homeTeam}, ${req.body.awayTeam}, (SELECT max(game_id) from Games), ${req.body.homeScore}, ${req.body.awayScore});`
