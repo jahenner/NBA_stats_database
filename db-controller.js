@@ -56,7 +56,7 @@ app.get('/GetTeams', function(req,res) {
 })
 
 app.get('/GetPlayers', function(req,res) {
-    const query1 = 'SELECT Players.player_id, Players.first_name, Players.last_name, Players.age, Players.career_points, Players.career_steals, Players.career_blocks, Players.career_rebounds, Cities.name as hometown, Teams.name as curr_team FROM Players JOIN Cities ON Players.hometown = Cities.city_id LEFT JOIN Teams ON Players.current_team = Teams.team_id;'
+    const query1 = 'SELECT Players.player_id, Players.first_name, Players.last_name, Players.age, Players.career_points, Players.career_steals, Players.career_blocks, Players.career_rebounds, Cities.name as hometown, Cities.city_id, Teams.name as curr_team, Teams.team_id FROM Players JOIN Cities ON Players.hometown = Cities.city_id LEFT JOIN Teams ON Players.current_team = Teams.team_id;'
 
     db.pool.query(query1, function (err, results, fields) {
         // console.log(results, fields, err)
@@ -126,6 +126,20 @@ app.put("/UpdateTeam/:_id", function(req,res) {
         })
         })
 
+app.put("/UpdatePlayer/:_id", function(req,res) {
+    const player_id = req.params._id;
+    console.log(req.body)
+    const query = `UPDATE Players SET first_name='${req.body.first_name}', last_name='${req.body.last_name}', age=${req.body.age}, career_points=${req.body.career_points}, career_steals=${req.body.career_steals}, career_blocks=${req.body.career_blocks}, career_rebounds=${req.body.career_rebounds}, hometown=${req.body.city_id}, current_team=${req.body.team_id} WHERE player_id=${player_id}`
+
+    db.pool.query(query, function (err, results, fields) {
+        // console.log(results, fields, err)
+        db.pool.query(query, function (err, results, fields) {
+            console.log(`error: ${err}`)
+            res.status(201).json(results);
+            })
+        })
+        })
+
 app.post("/addGame", function(req,res) {
     const query1 = `INSERT INTO Games (date) VALUES ('${req.body.date}');`
     const query2 = `INSERT INTO Teams_has_Games (home_team_id, away_team_id, game_id, home_team_score, away_team_score) VALUES (${req.body.homeTeam}, ${req.body.awayTeam}, (SELECT max(game_id) from Games), ${req.body.homeScore}, ${req.body.awayScore});`
@@ -170,7 +184,7 @@ app.post("/addTeam", function(req,res) {
 })
 
 app.post("/addPlayer", function(req,res) {
-    const query1 = `INSERT INTO Players(first_name, last_name, age, career_points, career_steals, career_blocks, career_rebounds, hometown, current_team) VALUES ('${req.body.first_name}', '${req.body.last_name}', '${req.body.age}', '${req.body.career_points}', '${req.body.career_steals}', '${req.body.career_blocks}', '${req.body.career_rebounds}', '${req.body.hometown}', '${req.body.current_team}');`
+    const query1 = `INSERT INTO Players(first_name, last_name, age, career_points, career_steals, career_blocks, career_rebounds, hometown, current_team) VALUES ('${req.body.firstName}', '${req.body.lastName}', '${req.body.age}', '${req.body.careerPoints}', '${req.body.careerSteals}', '${req.body.careerBlocks}', '${req.body.careerRebounds}', '${req.body.hometown}', '${req.body.currTeam}');`
 
     db.pool.query(query1, function (err, results, fields) {
         if (err != null) {
