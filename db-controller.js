@@ -131,6 +131,7 @@ app.put("/UpdatePlayer/:_id", function(req,res) {
     console.log(req.body)
     const query = `UPDATE Players SET first_name='${req.body.first_name}', last_name='${req.body.last_name}', age=${req.body.age}, career_points=${req.body.career_points}, career_steals=${req.body.career_steals}, career_blocks=${req.body.career_blocks}, career_rebounds=${req.body.career_rebounds}, hometown=${req.body.city_id}, current_team=${req.body.team_id} WHERE player_id=${player_id}`
 
+
     db.pool.query(query, function (err, results, fields) {
         // console.log(results, fields, err)
         db.pool.query(query, function (err, results, fields) {
