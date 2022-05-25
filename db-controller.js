@@ -69,7 +69,7 @@ app.get('/GetStats', function(req,res) {
     const query1 = "SELECT CONCAT(Players.first_name, ' ', Players.last_name) AS player_name, Games.date, IF(Players.current_team=Teams_has_Games.home_team_id, Teams_has_Games.home_team_id, Teams_has_Games.away_team_id) as opposing_team, Players_has_Games.rebounds, Players_has_Games.blocks, Players_has_Games.steals, Players_has_Games.turnovers, Players_has_Games.minutes_played, Players_has_Games.started_game, Players_has_Games.freethrows_attempt, Players_has_Games.freethrows_made, Players_has_Games.field_goals_attempt, Players_has_Games.field_goals_made, Players_has_Games.3_points_attempt, Players_has_Games.3_points_made, Players_has_Games.assists, Players_has_Games.fouls FROM Players_has_Games JOIN Players ON Players_has_Games.player_id = Players.player_id JOIN Games ON Games.game_id=Players_has_Games.game_id JOIN Teams_has_Games ON Teams_has_Games.game_id=Games.game_id;"
 
     db.pool.query(query1, function (err, results, fields) {
-        // console.log(results, fields, err)
+        console.log(results, err)
         res.status(201).json(results);
 
         })
