@@ -40,13 +40,13 @@ app.get('/GetGames', function(req, res)
 
     // DROP TABLE...
     db.pool.query(query1, function (err, results, fields) {
-        console.log(results, fields, err)
+        // console.log(results, fields, err)
         res.status(201).json(results);
         })
     });
 
 app.get('/GetTeams', function(req,res) {
-    const query1 = 'SELECT Teams.team_id, Teams.name, Teams.mascot, Cities.name as location FROM Teams JOIN Cities on Cities.city_id=Teams.location;'
+    const query1 = 'SELECT Teams.team_id, Teams.name, Teams.mascot, Cities.name as location, Cities.city_id FROM Teams JOIN Cities on Cities.city_id=Teams.location;'
 
     db.pool.query(query1, function (err, results, fields) {
         // console.log(results, fields, err)
@@ -56,7 +56,7 @@ app.get('/GetTeams', function(req,res) {
 })
 
 app.get('/GetPlayers', function(req,res) {
-    const query1 = 'SELECT Players.player_id, Players.first_name, Players.last_name, Players.age, Players.career_points, Players.career_steals, Players.career_blocks, Players.career_rebounds, Cities.name as hometown, Teams.name as curr_team FROM Players JOIN Cities ON Players.hometown = Cities.city_id LEFT JOIN Teams ON Players.current_team = Teams.team_id;'
+    const query1 = 'SELECT Players.player_id, Players.first_name, Players.last_name, Players.age, Players.career_points, Players.career_steals, Players.career_blocks, Players.career_rebounds, Cities.name as hometown, Cities.city_id, Teams.name as curr_team, Teams.team_id FROM Players JOIN Cities ON Players.hometown = Cities.city_id LEFT JOIN Teams ON Players.current_team = Teams.team_id;'
 
     db.pool.query(query1, function (err, results, fields) {
         // console.log(results, fields, err)
@@ -69,7 +69,7 @@ app.get('/GetStats', function(req,res) {
     const query1 = "SELECT CONCAT(Players.first_name, ' ', Players.last_name) AS player_name, Games.date, IF(Players.current_team=Teams_has_Games.home_team_id, Teams_has_Games.home_team_id, Teams_has_Games.away_team_id) as opposing_team, Players_has_Games.rebounds, Players_has_Games.blocks, Players_has_Games.steals, Players_has_Games.turnovers, Players_has_Games.minutes_played, Players_has_Games.started_game, Players_has_Games.freethrows_attempt, Players_has_Games.freethrows_made, Players_has_Games.field_goals_attempt, Players_has_Games.field_goals_made, Players_has_Games.3_points_attempt, Players_has_Games.3_points_made, Players_has_Games.assists, Players_has_Games.fouls, Players_has_Games.player_id, Players_has_Games.game_id FROM Players_has_Games JOIN Players ON Players_has_Games.player_id = Players.player_id JOIN Games ON Games.game_id=Players_has_Games.game_id JOIN Teams_has_Games ON Teams_has_Games.game_id=Games.game_id;"
 
     db.pool.query(query1, function (err, results, fields) {
-        // console.log(results, fields, err)
+        console.log(results, err)
         res.status(201).json(results);
 
         })
@@ -115,25 +115,28 @@ app.put("/UpdateCity/:_id", function(req,res) {
 app.put("/UpdateTeam/:_id", function(req,res) {
     const team_id = req.params._id;
     console.log(req.body)
-    const query = `SELECT * from Teams WHERE team_id=${team_id}`
-    const query1 = `UPDATE Teams SET name='${req.body.name}' WHERE team_id=${team_id}`
-    const query2 = `UPDATE Teams SET mascot='${req.body.mascot}' WHERE team_id=${team_id}`
-    const query3 = `UPDATE Players SET current_team='${req.body.name}' WHERE team_id=${team_id}`
-    const query4 = `UPDATE Teams_has_Games SET home_team='${req.body.name}' WHERE team_id=${team_id}`
-    const query5 = `UPDATE Teams_has_Games SET away_team='${req.body.name}' WHERE team_id=${team_id}`
+    const query = `UPDATE Teams SET name='${req.body.name}', mascot='${req.body.mascot}', location=${req.body.city_id} WHERE team_id=${team_id}`
 
     db.pool.query(query, function (err, results, fields) {
         // console.log(results, fields, err)
-        db.pool.query(query1, function (err, results, fields) {
-                db.pool.query(query2, function (err, results, fields) {
-                    db.pool.query(query3, function(err, results, fields) {
-                        db.pool.query(query4, function(err, results, fields) {
-                            db.pool.query(query5, function(err, results, fields) {
-                                res.status(201).json(results);
-                            })
-                        })
-                    })
-                })
+        db.pool.query(query, function (err, results, fields) {
+            console.log(`error: ${err}`)
+            res.status(201).json(results);
+            })
+        })
+        })
+
+app.put("/UpdatePlayer/:_id", function(req,res) {
+    const player_id = req.params._id;
+    console.log(req.body)
+    const query = `UPDATE Players SET first_name='${req.body.first_name}', last_name='${req.body.last_name}', age=${req.body.age}, career_points=${req.body.career_points}, career_steals=${req.body.career_steals}, career_blocks=${req.body.career_blocks}, career_rebounds=${req.body.career_rebounds}, hometown=${req.body.city_id}, current_team=${req.body.team_id} WHERE player_id=${player_id}`
+
+
+    db.pool.query(query, function (err, results, fields) {
+        // console.log(results, fields, err)
+        db.pool.query(query, function (err, results, fields) {
+            console.log(`error: ${err}`)
+            res.status(201).json(results);
             })
         })
         })
@@ -182,7 +185,7 @@ app.post("/addTeam", function(req,res) {
 })
 
 app.post("/addPlayer", function(req,res) {
-    const query1 = `INSERT INTO Players(first_name, last_name, age, career_points, career_steals, career_blocks, career_rebounds, hometown, current_team) VALUES ('${req.body.first_name}', '${req.body.last_name}', '${req.body.age}', '${req.body.career_points}', '${req.body.career_steals}', '${req.body.career_blocks}', '${req.body.career_rebounds}', '${req.body.hometown}', '${req.body.current_team}');`
+    const query1 = `INSERT INTO Players(first_name, last_name, age, career_points, career_steals, career_blocks, career_rebounds, hometown, current_team) VALUES ('${req.body.firstName}', '${req.body.lastName}', '${req.body.age}', '${req.body.careerPoints}', '${req.body.careerSteals}', '${req.body.careerBlocks}', '${req.body.careerRebounds}', '${req.body.hometown}', '${req.body.currTeam}');`
 
     db.pool.query(query1, function (err, results, fields) {
         if (err != null) {
