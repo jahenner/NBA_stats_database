@@ -34,7 +34,7 @@ app.get('/GetCities', function(req, res)
 app.get('/GetGames', function(req, res)
     {
     // Define our queries
-    const query1 = 'SELECT Games.game_id as game_id, home.team_id as home_id, away.team_id as away_id, Games.date, home.name as home_team, away.name as away_team, Teams_has_Games.home_team_score, Teams_has_Games.away_team_score FROM Teams_has_Games LEFT JOIN Teams home ON Teams_has_Games.home_team_id=home.team_id LEFT JOIN Teams away ON Teams_has_Games.away_team_id=away.team_id JOIN Games ON Games.game_id=Teams_has_Games.game_id;';
+    const query1 = 'SELECT Games.game_id as game_id, home.team_id as home_id, away.team_id as away_id, Games.date, home.name as home_team, away.name as away_team, Teams_has_Games.home_team_score, Teams_has_Games.away_team_score FROM Teams_has_Games LEFT JOIN Teams home ON Teams_has_Games.home_team_id=home.team_id LEFT JOIN Teams away ON Teams_has_Games.away_team_id=away.team_id JOIN Games ON Games.game_id=Teams_has_Games.game_id ORDER BY Games.date;';
 
     // Execute every query in an asynchronous manner, we want each query to finish before the next one starts
 
@@ -56,7 +56,7 @@ app.get('/GetTeams', function(req,res) {
 })
 
 app.get('/GetPlayers', function(req,res) {
-    const query1 = 'SELECT Players.player_id, Players.first_name, Players.last_name, Players.age, Players.career_points, Players.career_steals, Players.career_blocks, Players.career_rebounds, Cities.name as hometown, Cities.city_id, Teams.name as curr_team, Teams.team_id FROM Players JOIN Cities ON Players.hometown = Cities.city_id LEFT JOIN Teams ON Players.current_team = Teams.team_id;'
+    const query1 = 'SELECT Players.player_id, Players.first_name, Players.last_name, Players.age, Players.career_points, Players.career_steals, Players.career_blocks, Players.career_rebounds, Cities.name as hometown, Cities.city_id, Teams.name as curr_team, Teams.team_id FROM Players JOIN Cities ON Players.hometown = Cities.city_id LEFT JOIN Teams ON Players.current_team = Teams.team_id ORDER BY Players.last_name;'
 
     db.pool.query(query1, function (err, results, fields) {
         // console.log(results, fields, err)
@@ -195,6 +195,17 @@ app.post("/addPlayer", function(req,res) {
             res.status(201).json(results) }});
 })
 
+app.post("/addStat", function(req,res) {
+    const query1 = `INSERT INTO Players_has_Games (player_id,	game_id,	rebounds,	blocks,	steals,	turnovers,	minutes_played,	started_game,	freethrows_attempt,	freethrows_made,	field_goals_attempt,	field_goals_made,	3_points_attempt,	3_points_made,	assists,	fouls) VALUES '${req.body.player_id}', '${req.body.game_id}', '${req.body.rebounds}', '${req.body.blocks}', '${req.body.steals}', '${req.body.turnovers}', '${req.body.minutes_played}', '${req.body.started_game}', '${req.body.freethrows_attempt}', '${req.body.freethrows_made}', '${req.body.field_goals_attempt}', '${req.body.field_goals_made}', '${req.body.three_points_attempt}', '${req.body.three_points_made}', '${req.body.assists}', '${req.body.fouls}', ;`
+
+    db.pool.query(query1, function (err, results, fields) {
+        if (err != null) {
+            res.status(500).json({ Error: 'New player failed'})
+            
+        } else {
+            res.status(201).json(results) }});
+})
+
 app.delete('/GetGames/:_id', (req, res) => {
     const game_id = parseInt(req.params._id)
     const query1 = `DELETE FROM Teams_has_Games WHERE game_id=${game_id}`
@@ -229,11 +240,14 @@ app.delete('/GetTeams/:_id', (req, res) => {
 });
 
 app.delete('/GetStats/:_id', (req, res) => {
-    const player_id = parseInt(req.params._id)
-    const game_id = req.body.game_id
+    const ids = req.params._id.split('_')
+    const player_id = parseInt(ids[0])
+    const game_id = parseInt(ids[1])
+    console.log(req.body)
     const query1 = `DELETE FROM Players_has_Games WHERE player_id=${player_id} AND game_id=${game_id}`
 
     db.pool.query(query1, function (err, results, fields){
+                console.log(err)
                 res.status(204).json(results);
             });
 });
